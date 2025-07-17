@@ -28,7 +28,7 @@ const contactPointSchema = new Schema<ContactPoint>(
     rank: Number,
     period: PeriodSchema,
   },
-  { _id: false }
+  { _id: false, timestamps: false }
 );
 
 export { contactPointSchema };

@@ -11,3 +11,5 @@ export enum ContactRelationship {
   S = "State agency contact",
   U = "Unknown",
 }
+
+export const ContactRelationshipValues = Object.values(ContactRelationship);

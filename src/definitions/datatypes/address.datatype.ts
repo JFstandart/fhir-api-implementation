@@ -13,10 +13,19 @@ export interface Address {
   period?: Period; // Optional, period during which the address was in use
 }
 
-export interface AddressUse {
-  use: "home" | "work" | "temp" | "old" | "billing"; // The purpose of the address
+export enum AddressUse {
+  home = "home",
+  work = "work",
+  temp = "temp",
+  old = "old",
+  billing = "billing",
 }
 
-export interface AddressType {
-  type: "postal" | "physical" | "both"; // The type of address
+export enum AddressType {
+  postal = "postal",
+  physical = "physical",
+  both = "both",
 }
+
+export const AddressUseValues = Object.values(AddressUse);
+export const AddressTypeValues = Object.values(AddressType);

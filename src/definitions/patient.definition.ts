@@ -12,7 +12,6 @@ import { Communication } from "./datatypes/communication.datatype";
 import { Practitioner } from "./practitioner.definition";
 
 export interface PatientContact {
-  //TODO: Define Contact as datatype
   relationship?: ContactRelationship[];
   name?: HumanName;
   telecom?: ContactPoint[];
@@ -23,7 +22,6 @@ export interface PatientContact {
 }
 
 export interface PatientLink {
-  //TODO: Define LinkType as datatype
   other: Patient;
   type: LinkType;
 }
@@ -42,7 +40,7 @@ export interface Patient {
   photo?: Attachment[];
   contact?: PatientContact[];
   communication?: Communication[];
-  generalPractitioner?: Practitioner[]; //TODO: Define PractitionerRole
+  generalPractitioner?: Practitioner[]; 
   managingOrganization?: Organization;
   link?: PatientLink[];
 }

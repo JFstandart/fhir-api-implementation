@@ -10,5 +10,7 @@ export enum MaritalStatus {
   S = "Never Married",
   U = "Unmarried",
   W = "Widowed",
-  UNK = "Unknown",    
+  UNK = "Unknown",
 }
+
+export const MaritalStatusValues = Object.values(MaritalStatus);

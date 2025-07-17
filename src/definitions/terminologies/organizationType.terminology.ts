@@ -12,3 +12,5 @@ export enum OrganizationType {
   bus = "Non-Healthcare Business or Corporation",
   other = "Other",
 }
+
+export const OrganizationTypeValues = Object.values(OrganizationType);

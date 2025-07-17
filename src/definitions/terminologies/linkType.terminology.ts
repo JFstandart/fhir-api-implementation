@@ -4,3 +4,5 @@ export enum LinkType {
   "REFER" = "Refer",
   "SEE-ALSO" = "See also",
 }
+
+export const LinkTypeValues = Object.values(LinkType);

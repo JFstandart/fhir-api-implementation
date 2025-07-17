@@ -82,3 +82,5 @@ export enum CommonLanguages {
   "Chinese (Singapore)" = "zh-SG",
   "Chinese (Taiwan)" = "zh-TW",
 }
+
+export const CommonLanguagesValues = Object.values(CommonLanguages);
