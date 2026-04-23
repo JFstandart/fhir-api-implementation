@@ -13,6 +13,18 @@ import diagnosticReportRoutes from "./routes/diagnosticReport.route";
 const app: Application = express();
 const port: number = 3000;
 
+// CORS middleware - must be at the very top!
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Content-Length, X-Requested-With");
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+    return;
+  }
+  next();
+});
+
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -27,7 +39,8 @@ const swaggerOptions = {
   apis: ["./src/docs/*.yaml"], // Path to the API docs
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
