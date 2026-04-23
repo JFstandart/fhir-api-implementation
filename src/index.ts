@@ -6,6 +6,9 @@ import patientRoutes from "./routes/patient.route";
 import observationRoutes from "./routes/observation.route";
 import conditionRoutes from "./routes/condition.route";
 import encounterRoutes from "./routes/encounter.route";
+import medicationRequestRoutes from "./routes/medicationRequest.route";
+import allergyIntoleranceRoutes from "./routes/allergyIntolerance.route";
+import diagnosticReportRoutes from "./routes/diagnosticReport.route";
 
 const app: Application = express();
 const port: number = 3000;
@@ -36,6 +39,9 @@ app.use("/patients", patientRoutes);
 app.use("/observations", observationRoutes);
 app.use("/conditions", conditionRoutes);
 app.use("/encounters", encounterRoutes);
+app.use("/medication-requests", medicationRequestRoutes);
+app.use("/allergy-intolerances", allergyIntoleranceRoutes);
+app.use("/diagnostic-reports", diagnosticReportRoutes);
 
 connectToMongo().then(() => {
   app.listen(port, () => {
