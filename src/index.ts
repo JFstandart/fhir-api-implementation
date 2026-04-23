@@ -3,6 +3,9 @@ import connectToMongo from "./mongoose-connection";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import patientRoutes from "./routes/patient.route";
+import observationRoutes from "./routes/observation.route";
+import conditionRoutes from "./routes/condition.route";
+import encounterRoutes from "./routes/encounter.route";
 
 const app: Application = express();
 const port: number = 3000;
@@ -30,6 +33,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import routes
 app.use("/patients", patientRoutes);
+app.use("/observations", observationRoutes);
+app.use("/conditions", conditionRoutes);
+app.use("/encounters", encounterRoutes);
 
 connectToMongo().then(() => {
   app.listen(port, () => {

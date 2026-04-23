@@ -1,29 +1,18 @@
 import { Schema } from "mongoose";
 import { Organization } from "../../definitions/organization.definition";
-import { endpointSchema } from "./endpoint.schema";
-import { qualificationSchema } from "./datatypes/qualification.schema";
 import { extendedContactDetailSchema } from "./datatypes/extendedContactDetail.schema";
-import { OrganizationTypeValues } from "../../definitions/terminologies/organizationType.terminology";
+import { codeableConceptSchema } from "./datatypes/codeableConcept.schema";
 
 const organizationSchema = new Schema<Organization>({
   _id: { type: String, required: true },
+  resourceType: { type: String, default: "Organization", required: true },
   active: { type: Boolean, required: true },
-  type: [
-    {
-      type: String,
-      enum: {
-        values: OrganizationTypeValues,
-        message: "`{VALUE}`, Invalid value for Organization Type",
-      },
-    },
-  ],
+  type: [{ type: codeableConceptSchema }],
   name: { type: String, required: true },
   alias: [{ type: String }],
-  description: [{ type: String }],
   contact: [{ type: extendedContactDetailSchema }],
-  partOf: { type: Schema.Types.ObjectId, ref: "Organization" },
-  endpoint: [{ type: endpointSchema }],
-  qualification: [{ type: qualificationSchema }],
-});
+  partOf: { type: Schema.Types.Mixed },
+  endpoint: [{ type: Schema.Types.Mixed }],
+}, { timestamps: false });
 
 export { organizationSchema };

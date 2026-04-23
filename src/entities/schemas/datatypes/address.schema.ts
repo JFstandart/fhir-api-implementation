@@ -1,36 +1,25 @@
 import { Schema } from "mongoose";
-import {
-  Address,
-  AddressUseValues,
-  AddressTypeValues,
-} from "../../../definitions/datatypes/address.datatype";
+import { Address } from "@medplum/fhirtypes";
+import { PeriodSchema } from "./period.schema";
 
 const addressSchema = new Schema<Address>(
   {
     use: {
       type: String,
-      enum: {
-        values: AddressUseValues,
-        message: "`{VALUE}`, Invalid value for Address use",
-      },
-      required: false,
+      enum: ['home', 'work', 'temp', 'old', 'billing'],
     },
     type: {
       type: String,
-      enum: {
-        values: AddressTypeValues,
-        message: "`{VALUE}`, Invalid value for Address type",
-      },
-      required: false,
+      enum: ['postal', 'physical', 'both'],
     },
-    text: String,
-    line: [String],
-    city: String,
-    district: String,
-    state: String,
-    postalCode: String,
-    country: String,
-    period: { type: Schema.Types.Mixed, default: null },
+    text: { type: String },
+    line: { type: [String] },
+    city: { type: String },
+    district: { type: String },
+    state: { type: String },
+    postalCode: { type: String },
+    country: { type: String },
+    period: PeriodSchema,
   },
   { _id: false, timestamps: false }
 );

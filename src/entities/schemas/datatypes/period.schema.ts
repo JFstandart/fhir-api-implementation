@@ -1,10 +1,10 @@
 import { Schema } from "mongoose";
-import { Period } from "../../../definitions/datatypes/period.datatype";
+import { Period } from "@medplum/fhirtypes";
 
 const PeriodSchema = new Schema<Period>(
   {
-    start: { type: Date, required: true },
-    end: { type: Date, required: true },
+    start: { type: String },
+    end: { type: String },
   },
   { _id: false, timestamps: false }
 );

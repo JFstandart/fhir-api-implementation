@@ -3,14 +3,18 @@ components:
     Patient:
       type: object
       required:
-        - _id
+        - resourceType
+        - id
         - active
         - name
-        - telecom
         - gender
         - birthDate
       properties:
-        _id:
+        resourceType:
+          type: string
+          enum: [Patient]
+          example: Patient
+        id:
           type: string
           description: The unique identifier for the patient.
           example: "60c72b2f9b1e8b001c8e4d2a"
@@ -43,42 +47,64 @@ components:
           description: Indicates if the patient is deceased, and optionally when.
           example: false
         address:
-          $ref: '#/components/schemas/Address'
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
         maritalStatus:
-          $ref: '#/components/schemas/MaritalStatus'
+          $ref: '#/components/schemas/CodeableConcept'
         multipleBirth:
           oneOf:
             - type: boolean
             - type: number
-          description: Indicates if the patient was part of a multiple birth (e.g., twins), and optionally the birth order.
+          description: Indicates if the patient was part of a multiple birth.
           example: 2
         photo:
           type: array
-          description: Photos or other images of the patient.
           items:
             $ref: '#/components/schemas/Attachment'
         contact:
           type: array
-          description: Contact persons for the patient.
           items:
             $ref: '#/components/schemas/PatientContact'
         communication:
           type: array
-          description: Communication preferences or details for the patient.
           items:
             $ref: '#/components/schemas/Communication'
         generalPractitioner:
           type: array
-          description: The patient's general practitioner(s).
           items:
-            $ref: '#/components/schemas/Practitioner'
+            type: string
         managingOrganization:
-          $ref: '#/components/schemas/Organization'
+          type: string
         link:
           type: array
-          description: Links to other patient records.
           items:
             $ref: '#/components/schemas/PatientLink'
+    
+    CodeableConcept:
+      type: object
+      properties:
+        coding:
+          type: array
+          items:
+            $ref: '#/components/schemas/Coding'
+        text:
+          type: string
+    
+    Coding:
+      type: object
+      properties:
+        system:
+          type: string
+        version:
+          type: string
+        code:
+          type: string
+        display:
+          type: string
+        userSelected:
+          type: boolean
+    
     PatientContact:
       type: object
       required:
@@ -86,14 +112,12 @@ components:
       properties:
         relationship:
           type: array
-          description: The relationship of the contact to the patient.
           items:
-            $ref: '#/components/schemas/ContactRelationship'
+            $ref: '#/components/schemas/CodeableConcept'
         name:
           $ref: '#/components/schemas/HumanName'
         telecom:
           type: array
-          description: Contact details for the contact person.
           items:
             $ref: '#/components/schemas/ContactPoint'
         address:
@@ -101,9 +125,10 @@ components:
         gender:
           $ref: '#/components/schemas/Gender'
         organization:
-          $ref: '#/components/schemas/Organization'
+          type: string
         period:
           $ref: '#/components/schemas/Period'
+    
     PatientLink:
       type: object
       required:
@@ -111,274 +136,187 @@ components:
         - type
       properties:
         other:
-          $ref: '#/components/schemas/Patient'
-          description: Another patient resource that is linked.
+          type: string
         type:
-          $ref: '#/components/schemas/LinkType'
-          description: The type of link between the two patient records.
+          type: string
+          enum: [replaced-by, replaces, refer, seealso]
+    
     HumanName:
       type: object
       properties:
         use:
           type: string
-          description: The use of a name (e.g., usual, official, temp).
           enum: [usual, official, temp, nickname, anonymous, old, maiden]
-          example: "usual"
         text:
           type: string
-          description: The full name text.
-          example: "John Doe"
         family:
           type: string
-          description: The family name (surname).
-          example: "Doe"
         given:
           type: array
           items:
             type: string
-          description: Given names (first name, middle name).
-          example: ["John", "Michael"]
         prefix:
           type: array
           items:
             type: string
-          description: Parts that come before the name.
-          example: ["Mr."]
         suffix:
           type: array
           items:
             type: string
-          description: Parts that come after the name.
-          example: ["Jr.", "MD"]
         period:
           $ref: '#/components/schemas/Period'
+    
     ContactPoint:
       type: object
       properties:
         system:
           type: string
-          description: Telecommunications system (e.g., phone, fax, email).
           enum: [phone, fax, email, pager, url, sms, other]
-          example: "phone"
         value:
           type: string
-          description: The actual contact detail (e.g., a phone number, email address).
-          example: "+1-555-123-4567"
         use:
           type: string
-          description: Purpose of this contact point.
           enum: [home, work, temp, old, mobile]
-          example: "mobile"
         rank:
           type: integer
-          description: Specifies a preferred order in a list of contact points.
-          example: 1
         period:
           $ref: '#/components/schemas/Period'
+    
     Address:
       type: object
       properties:
         use:
           type: string
-          description: The purpose of this address.
           enum: [home, work, temp, old, billing]
-          example: "home"
         type:
           type: string
-          description: The type of address.
           enum: [postal, physical, both]
-          example: "physical"
         text:
           type: string
-          description: A full-text representation of the address.
-          example: "123 Main St, Anytown, CA 90210"
         line:
           type: array
           items:
             type: string
-          description: Street name, number, direction, P.O. Box, etc.
-          example: ["123 Main St", "Apt 4B"]
         city:
           type: string
-          description: Name of city, town etc.
-          example: "Anytown"
         district:
           type: string
-          description: District (e.g., county, parish).
-          example: "AnyCounty"
         state:
           type: string
-          description: Sub-unit of a country (e.g., state, province).
-          example: "CA"
         postalCode:
           type: string
-          description: A postal code for the address.
-          example: "90210"
         country:
           type: string
-          description: Country (e.g., "USA", "CAN", "AUS").
-          example: "USA"
         period:
           $ref: '#/components/schemas/Period'
+    
     Gender:
       type: string
-      description: Administrative Gender (e.g., male, female, other, unknown).
       enum: [male, female, other, unknown]
-      example: "male"
-    Organization:
-      type: object
-      properties:
-        _id:
-          type: string
-          description: The unique identifier for the organization.
-          example: "60c72b2f9b1e8b001c8e4d2b"
-        name:
-          type: string
-          description: Name of the organization.
-          example: "Any Medical Center"
-        active:
-          type: boolean
-          description: Whether the organization record is active.
-          example: true
+    
     Period:
       type: object
       properties:
         start:
           type: string
           format: date-time
-          description: The start of the period.
-          example: "2020-01-01T00:00:00Z"
         end:
           type: string
           format: date-time
-          description: The end of the period.
-          example: "2025-12-31T23:59:59Z"
-    MaritalStatus:
-      type: object
-      properties:
-        coding:
-          type: array
-          items:
-            type: object
-            properties:
-              system:
-                type: string
-                description: The system for the code.
-                example: "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
-              code:
-                type: string
-                description: The code for the marital status.
-                example: "M"
-              display:
-                type: string
-                description: The display name for the code.
-                example: "Married"
-        text:
-          type: string
-          description: A human-readable display of the marital status.
-          example: "Married"
+    
     Attachment:
       type: object
       properties:
         contentType:
           type: string
-          description: Mime type of the content (e.g., "image/jpeg").
-          example: "image/jpeg"
         language:
           type: string
-          description: Human language of the content.
-          example: "en-US"
         data:
           type: string
           format: byte
-          description: The actual data in base64 binary encoding.
         url:
           type: string
           format: url
-          description: A url that points to the attachment content.
-          example: "http://example.org/photo.jpg"
         size:
           type: integer
-          description: The number of bytes of content.
-          example: 102400
         hash:
           type: string
           format: byte
-          description: The hash of the data.
         title:
           type: string
-          description: Label or title of the attachment.
-          example: "Patient Profile Picture"
         creation:
           type: string
           format: date-time
-          description: Date attachment was first created.
-          example: "2023-01-01T10:00:00Z"
+    
     Communication:
       type: object
       properties:
         language:
-          $ref: '#/components/schemas/Coding'
+          $ref: '#/components/schemas/CodeableConcept'
         preferred:
           type: boolean
-          description: Language preference for the patient.
-          example: true
-    Practitioner:
-      type: object
-      properties:
-        _id:
-          type: string
-          description: The unique identifier for the practitioner.
-          example: "60c72b2f9b1e8b001c8e4d2c"
-        name:
-          type: array
-          items:
-            $ref: '#/components/schemas/HumanName'
-        active:
-          type: boolean
-          description: Whether the practitioner record is active.
-          example: true
-    ContactRelationship:
-      type: object
-      properties:
-        coding:
-          type: array
-          items:
-            type: object
-            properties:
-              system:
-                type: string
-                description: The system for the code.
-                example: "http://terminology.hl7.org/CodeSystem/v2-0131"
-              code:
-                type: string
-                description: The code for the relationship.
-                example: "SPO"
-              display:
-                type: string
-                description: The display name for the code.
-                example: "Spouse"
-        text:
-          type: string
-          description: A human-readable display of the relationship.
-          example: "Spouse"
-    LinkType:
-      type: string
-      description: The type of link between patient records.
-      enum: [replaced-by, replaces, refer, seealso]
-      example: "replaces"
-    Coding:
-      type: object
-      properties:
-        system:
-          type: string
-          description: The system for the code.
-          example: "urn:ietf:bcp:47"
-        code:
-          type: string
-          description: The code for the language.
-          example: "en"
-        display:
-          type: string
-          description: The display name for the code.
-          example: "English"
+
+paths:
+  /patients:
+    get:
+      summary: List all patients
+      responses:
+        '200':
+          description: A list of patients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+    post:
+      summary: Create a new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+      responses:
+        '201':
+          description: Created
+  /patients/{id}:
+    get:
+      summary: Get patient by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Update patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patient'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted

@@ -2,20 +2,20 @@ import { Schema } from "mongoose";
 import { Patient } from "../../definitions/patient.definition";
 import { humanNameSchema } from "./datatypes/humanName.schema";
 import { contactPointSchema } from "./datatypes/contactPoint.schema";
-import { GenderValues } from "../../definitions/terminologies/gender.terminology";
 import { addressSchema } from "./datatypes/address.schema";
-import {
-  MaritalStatus,
-  MaritalStatusValues,
-} from "../../definitions/terminologies/maritalStatus.terminology";
 import { attachmentSchema } from "./datatypes/attachment.schema";
-import { ContactRelationshipValues } from "../../definitions/terminologies/contactRelationship.terminology";
 import { PeriodSchema } from "./datatypes/period.schema";
 import { communicationSchema } from "./datatypes/communication.schema";
-import { LinkTypeValues } from "../../definitions/terminologies/linkType.terminology";
+import {
+  GenderValues,
+  MaritalStatusValues,
+  ContactRelationshipValues,
+  LinkTypeValues,
+} from "../../definitions/terminologies";
 
 const patientSchema = new Schema<Patient>({
   _id: { type: String, required: true },
+  resourceType: { type: String, default: "Patient", required: true },
   active: { type: Boolean, required: true },
   name: { type: [humanNameSchema], required: true },
   telecom: { type: [contactPointSchema], default: [] },
@@ -27,61 +27,24 @@ const patientSchema = new Schema<Patient>({
     },
     required: true,
   },
-  birthDate: { type: Date, required: true },
-  deceased: { type: Schema.Types.Mixed, default: null }, // Can be boolean or Date
-  address: { type: [addressSchema], default: {} },
-  maritalStatus: {
-    type: String,
-    enum: {
-      values: MaritalStatusValues,
-      message: "`{VALUE}`, Invalid value for Marital Status",
-    },
-    required: false,
-    default: MaritalStatus.UNK, // Default to Unknown
-  },
-  multipleBirth: { type: Schema.Types.Mixed, default: null }, // Can be boolean or number
-  photo: { type: [attachmentSchema], default: {} },
+  birthDate: { type: String, required: true }, // FHIR birthDate is string (date)
+  deceasedBoolean: { type: Boolean },
+  deceasedDateTime: { type: String },
+  address: { type: [addressSchema], default: [] },
+  maritalStatus: { type: Schema.Types.Mixed },
+  multipleBirthBoolean: { type: Boolean },
+  multipleBirthInteger: { type: Number },
+  photo: { type: [attachmentSchema], default: [] },
   contact: {
     type: [
       {
-        relationship: {
-          type: String,
-          enum: {
-            values: ContactRelationshipValues,
-            message: "`{VALUE}`, Invalid value for Contact Relationship",
-          },
-          default: null,
-          required: false,
-        },
-        name: {
-          type: humanNameSchema,
-          default: null,
-        },
-        telecom: {
-          type: [contactPointSchema],
-          default: [],
-        },
-        address: {
-          type: addressSchema,
-          default: null,
-        },
-        gender: {
-          type: String,
-          enum: {
-            values: GenderValues,
-            message: "{VALUE} is not a valid gender",
-          },
-          required: true,
-        },
-        organization: {
-          type: Schema.Types.ObjectId,
-          ref: "Organization",
-          default: null,
-        },
-        period: {
-          type: PeriodSchema,
-          default: { start: new Date(), end: new Date() },
-        },
+        relationship: { type: [Schema.Types.Mixed] },
+        name: { type: humanNameSchema },
+        telecom: { type: [contactPointSchema], default: [] },
+        address: { type: addressSchema },
+        gender: { type: String, enum: GenderValues },
+        organization: { type: String },
+        period: { type: PeriodSchema },
       },
     ],
     default: [],
@@ -91,28 +54,20 @@ const patientSchema = new Schema<Patient>({
     default: [],
   },
   generalPractitioner: {
-    type: [{ type: Schema.Types.ObjectId, ref: "Practitioner" }], //TODO: Define Practitioner schema
+    type: [Schema.Types.Mixed],
     default: [],
   },
   managingOrganization: {
-    type: Schema.Types.ObjectId,
-    ref: "Organization",
+    type: Schema.Types.Mixed,
     default: null,
   },
   link: {
     type: [
       {
-        other: {
-          type: Schema.Types.ObjectId,
-          ref: "Patient",
-          required: true,
-        },
+        other: { type: Schema.Types.Mixed, required: true },
         type: {
           type: String,
-          enum: {
-            values: LinkTypeValues,
-            message: "`{VALUE}`, Invalid value for Patient Link Type",
-          },
+          enum: LinkTypeValues,
           required: true,
         },
       },

@@ -1,21 +1,16 @@
 import { Schema } from "mongoose";
-import { Attachment } from "../../../definitions/datatypes/attachment.datatype";
+import { Attachment } from "@medplum/fhirtypes";
 
 const attachmentSchema = new Schema<Attachment>(
   {
-    contentType: { type: String, required: true },
+    contentType: { type: String },
     language: { type: String },
     data: { type: String },
     url: { type: String },
     size: { type: Number },
     hash: { type: String },
     title: { type: String },
-    creation: { type: Date },
-    height: { type: Number },
-    width: { type: Number },
-    frames: { type: Number },
-    duration: { type: Number },
-    pages: { type: Number },
+    creation: { type: String },
   },
   { _id: false, timestamps: false }
 );

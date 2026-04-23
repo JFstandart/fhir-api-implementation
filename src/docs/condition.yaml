@@ -1,0 +1,59 @@
+components:
+  schemas:
+    Condition:
+      type: object
+      required:
+        - resourceType
+        - id
+        - subject
+        - code
+      properties:
+        resourceType:
+          type: string
+          enum: [Condition]
+          example: Condition
+        id:
+          type: string
+        clinicalStatus:
+          $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        verificationStatus:
+          $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        category:
+          type: array
+          items:
+            $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        code:
+          $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        subject:
+          type: object
+          properties:
+            reference:
+              type: string
+            type:
+              type: string
+              default: Patient
+        recordedDate:
+          type: string
+          format: date-time
+
+paths:
+  /conditions:
+    get:
+      summary: List conditions
+      parameters:
+        - name: patient
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create condition
+      responses:
+        '201':
+          description: Created

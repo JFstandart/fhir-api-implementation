@@ -1,17 +1,10 @@
 import { Schema } from "mongoose";
-import { Communication } from "../../../definitions/datatypes/communication.datatype";
-import { CommonLanguagesValues } from "../../../definitions/terminologies/commonLanguages.terminology";
+import { PatientCommunication } from "@medplum/fhirtypes";
+import { codeableConceptSchema } from "./codeableConcept.schema";
 
-const communicationSchema = new Schema<Communication>(
+const communicationSchema = new Schema<PatientCommunication>(
   {
-    language: {
-      type: String,
-      enum: {
-        values: CommonLanguagesValues,
-        message: "`{VALUE}`, Invalid value for Communication language",
-      },
-      required: true,
-    },
+    language: { type: codeableConceptSchema, required: true },
     preferred: { type: Boolean },
   },
   { _id: false, timestamps: false }

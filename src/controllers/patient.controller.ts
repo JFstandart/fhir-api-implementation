@@ -1,22 +1,24 @@
 import { Request, Response } from "express";
 import { PatientModel } from "../entities/models/patient.model";
+import { fromFHIR, toFHIR } from "../helpers/fhir.helper";
 
 export const createPatient = async (req: Request, res: Response) => {
   try {
-    const patient = new PatientModel(req.body);
+    const data = fromFHIR(req.body);
+    const patient = new PatientModel(data);
     await patient.save();
-    res.status(201).json(patient);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating patient" });
+    res.status(201).json(toFHIR(patient));
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 export const getPatients = async (req: Request, res: Response) => {
   try {
     const patients = await PatientModel.find();
-    res.json(patients);
-  } catch (error) {
-    res.status(404).json({ message: "No patients found" });
+    res.json(patients.map(toFHIR));
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -24,39 +26,35 @@ export const getPatientById = async (req: Request, res: Response) => {
   try {
     const patient = await PatientModel.findById(req.params.id);
     if (!patient) {
-      res.status(404).json({ message: "Patient not found" });
-    } else {
-      res.json(patient);
+      return res.status(404).json({ message: "Patient not found" });
     }
-  } catch (error) {
-    res.status(404).json({ message: "Patient not found" });
+    res.json(toFHIR(patient));
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 export const updatePatient = async (req: Request, res: Response) => {
   try {
-    const patient = await PatientModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const data = fromFHIR(req.body);
+    const patient = await PatientModel.findByIdAndUpdate(req.params.id, data, { new: true });
     if (!patient) {
-      res.status(404).json({ message: "Patient not found" });
-    } else {
-      res.json(patient);
+      return res.status(404).json({ message: "Patient not found" });
     }
-  } catch (error) {
-    res.status(400).json({ message: "Error updating patient" });
+    res.json(toFHIR(patient));
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 export const deletePatient = async (req: Request, res: Response) => {
   try {
-    await PatientModel.findByIdAndDelete(req.params.id);
+    const deleted = await PatientModel.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
     res.json({ message: "Patient deleted successfully" });
-  } catch (error) {
-    res.status(404).json({ message: "Patient not found" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };

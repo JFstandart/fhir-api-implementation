@@ -1,0 +1,57 @@
+components:
+  schemas:
+    Encounter:
+      type: object
+      required:
+        - resourceType
+        - id
+        - status
+        - subject
+      properties:
+        resourceType:
+          type: string
+          enum: [Encounter]
+          example: Encounter
+        id:
+          type: string
+        status:
+          type: string
+          enum: [planned, arrived, triaged, in-progress, onleave, finished, cancelled, entered-in-error, unknown]
+        class:
+          type: array
+          items:
+            $ref: './patient.yaml#/components/schemas/Coding'
+        subject:
+          type: object
+          properties:
+            reference:
+              type: string
+        period:
+          $ref: './patient.yaml#/components/schemas/Period'
+        reason:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: array
+                items:
+                  $ref: './patient.yaml#/components/schemas/CodeableConcept'
+
+paths:
+  /encounters:
+    get:
+      summary: List encounters
+      parameters:
+        - name: patient
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create encounter
+      responses:
+        '201':
+          description: Created

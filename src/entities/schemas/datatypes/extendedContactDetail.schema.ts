@@ -1,17 +1,13 @@
 import { Schema } from "mongoose";
-import { ExtendedContactDetail } from "../../../definitions/datatypes/extendedContactDetail.datatype";
-import { addressSchema } from "./address.schema";
+import { ContactDetail } from "@medplum/fhirtypes";
 import { contactPointSchema } from "./contactPoint.schema";
-import { humanNameSchema } from "./humanName.schema";
-import { PeriodSchema } from "./period.schema";
 
-const extendedContactDetailSchema = new Schema<ExtendedContactDetail>({
-  purpose: [{ type: String }],
-  name: { type: humanNameSchema },
-  telecom: [{ type: contactPointSchema }],
-  address: [{ type: addressSchema }],
-  organization: { type: Schema.Types.ObjectId, ref: "Organization" },
-  period: { type: PeriodSchema },
-});
+const contactDetailSchema = new Schema<ContactDetail>(
+  {
+    name: { type: String },
+    telecom: [contactPointSchema],
+  },
+  { _id: false, timestamps: false }
+);
 
-export { extendedContactDetailSchema };
+export { contactDetailSchema as extendedContactDetailSchema };

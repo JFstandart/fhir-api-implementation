@@ -1,0 +1,99 @@
+components:
+  schemas:
+    Observation:
+      type: object
+      required:
+        - resourceType
+        - id
+        - status
+        - code
+        - subject
+      properties:
+        resourceType:
+          type: string
+          enum: [Observation]
+          example: Observation
+        id:
+          type: string
+        status:
+          type: string
+          enum: [registered, preliminary, final, amended, corrected, cancelled, entered-in-error, unknown]
+        category:
+          type: array
+          items:
+            $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        code:
+          $ref: './patient.yaml#/components/schemas/CodeableConcept'
+        subject:
+          type: object
+          properties:
+            reference:
+              type: string
+            type:
+              type: string
+              default: Patient
+        effectiveDateTime:
+          type: string
+          format: date-time
+        valueQuantity:
+          $ref: '#/components/schemas/Quantity'
+        note:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+    
+    Quantity:
+      type: object
+      properties:
+        value:
+          type: number
+        comparator:
+          type: string
+          enum: ['<', '<=', '>=', '>']
+        unit:
+          type: string
+        system:
+          type: string
+        code:
+          type: string
+
+paths:
+  /observations:
+    get:
+      summary: List observations
+      parameters:
+        - name: patient
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: code
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create observation
+      responses:
+        '201':
+          description: Created
+  /observations/{id}:
+    get:
+      summary: Get observation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK

@@ -1,18 +1,12 @@
 import { Schema } from "mongoose";
-import {
-  HumanName,
-  HumanNameUseValues,
-} from "../../../definitions/datatypes/humanName.datatype";
+import { HumanName } from "@medplum/fhirtypes";
 import { PeriodSchema } from "./period.schema";
 
 const humanNameSchema = new Schema<HumanName>(
   {
     use: {
       type: String,
-      enum: {
-        values: HumanNameUseValues,
-        message: "`{VALUE}`, Invalid value for HumanName use",
-      },
+      enum: ['usual', 'official', 'temp', 'nickname', 'anonymous', 'old', 'maiden'],
       required: false,
     },
     text: { type: String, required: true },

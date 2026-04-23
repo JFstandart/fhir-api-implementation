@@ -1,31 +1,19 @@
 import { Schema } from "mongoose";
-import {
-  ContactPoint,
-  ContactPointSystemValues,
-  ContactPointUseValues,
-} from "../../../definitions/datatypes/contactPoint.datatype";
+import { ContactPoint } from "@medplum/fhirtypes";
 import { PeriodSchema } from "./period.schema";
 
 const contactPointSchema = new Schema<ContactPoint>(
   {
     system: {
       type: String,
-      enum: {
-        values: ContactPointSystemValues,
-        message: "`{VALUE}`, Invalid value for ContactPoint system",
-      },
-      required: false,
+      enum: ['phone', 'fax', 'email', 'pager', 'url', 'sms', 'other'],
     },
-    value: String,
+    value: { type: String },
     use: {
       type: String,
-      enum: {
-        values: ContactPointUseValues,
-        message: "`{VALUE}`, Invalid value for ContactPoint use",
-      },
-      required: false,
+      enum: ['home', 'work', 'temp', 'old', 'mobile'],
     },
-    rank: Number,
+    rank: { type: Number },
     period: PeriodSchema,
   },
   { _id: false, timestamps: false }

@@ -9,15 +9,15 @@ import { attachmentSchema } from "./datatypes/attachment.schema";
 
 const practitionerSchema = new Schema<Practitioner>({
   _id: { type: String, required: true },
+  resourceType: { type: String, default: "Practitioner", required: true },
   active: { type: Boolean, required: true },
   name: [{ type: humanNameSchema }],
   telecom: [{ type: contactPointSchema }],
   gender: { type: String },
-  birthDate: { type: Date },
-  deceased: { type: Schema.Types.Mixed, default: null }, // Can be boolean or Date
+  birthDate: { type: String },
   address: [{ type: addressSchema }],
-  photo: { type: [attachmentSchema], default: {} },
-  qualification: { type: [qualificationSchema], default: {} },
+  photo: { type: [attachmentSchema], default: [] },
+  qualification: { type: [qualificationSchema], default: [] },
   communication: {
     type: [communicationSchema],
     default: [],
